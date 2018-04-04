@@ -25,20 +25,20 @@ import org.xml.sax.InputSource;
  * @author andimou
  */
 public class XPathTermMapProcessor extends AbstractTermMapProcessor {
-    
+
     // Log
     static final Logger log = LoggerFactory.getLogger(
             XPathTermMapProcessor.class.getSimpleName());
-    
+
     public XPathContext nsContext = new XPathContext();
     private DefaultNamespaceContext dnc = new DefaultNamespaceContext();
-    
+
     public XPathTermMapProcessor(){ }
-    
+
     public XPathTermMapProcessor(DefaultNamespaceContext dnc){
         this.dnc = dnc;
     }
-    
+
     /**
      * Process a XPath expression against an XML node
      *
@@ -56,9 +56,9 @@ public class XPathTermMapProcessor extends AbstractTermMapProcessor {
         } catch (SAXPathException ex) {
             log.error("SAXPathException " + ex);
         }
-        StringBufferInputStream input = 
+        StringBufferInputStream input =
                 new StringBufferInputStream(node.toXML().toString());
-        
+
         InputSource source = new InputSource(input);
         Event event = dog.createEvent();
         event.setXMLBuilder(new XOMBuilder());
@@ -67,9 +67,20 @@ public class XPathTermMapProcessor extends AbstractTermMapProcessor {
             @Override
             public void onNodeHit(
                     Expression expression, NodeItem nodeItem) {
-                Node node = (Node) nodeItem.xml;    
+                Node node = (Node) nodeItem.xml;
                 //if(nodeItem instanceOf Attribute)
-                list.add(node.getValue().toString());
+                //Added by Carlos Palma Zurita for CNIG-RDF
+                if(node instanceof nu.xom.Element && ((nu.xom.Element) node).getLocalName().equals("geometry")) {
+                	for(int i = 0; i < node.getChildCount(); i++ ) {
+                		Node child = node.getChild(i);
+                		if(node.getChild(i) instanceof nu.xom.Element && ((nu.xom.Element) child).getNamespacePrefix(0).equals("gml"))  {
+                			list.add(node.getChild(i).toXML().toString());
+                		}
+                	}
+                }else {
+                	list.add(node.getValue().toString());
+                }
+                ///////////////////////
             }
 
             @Override
@@ -90,7 +101,7 @@ public class XPathTermMapProcessor extends AbstractTermMapProcessor {
                if (!(n instanceof Attribute) && n.getChildCount() > 1) {
                     list.add(n.getValue().trim().replaceAll("[\\t\\n\\r]", " ").replaceAll(" +", " ").replaceAll("\\( ", "\\(").replaceAll(" \\)", "\\)").replaceAll(" :", ":").replaceAll(" ,", ","));
                 } else {
-                    list.add(n.getValue().toString());
+          /          list.add(n.getValue().toString());
                 }*/
 
         return list;
@@ -101,10 +112,10 @@ public class XPathTermMapProcessor extends AbstractTermMapProcessor {
     public List<String> extractValueFromNode(Object node, String expression) {
         return extractValueFromNode((Node) node, expression);
     }
-    
+
     @Override
     public String cleansing(String value) {
         return value;
     }
-    
+
 }
