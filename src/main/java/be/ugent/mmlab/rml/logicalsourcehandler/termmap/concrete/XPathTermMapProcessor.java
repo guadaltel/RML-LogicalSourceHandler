@@ -74,14 +74,14 @@ public class XPathTermMapProcessor extends AbstractTermMapProcessor {
                 	for(int i = 0; i < node.getChildCount(); i++ ) {
                 		Node child = node.getChild(i);
                 		if(node.getChild(i) instanceof nu.xom.Element && ((nu.xom.Element) child).getNamespacePrefix(0).equals("gml"))  {
-                			list.add(node.getChild(i).toXML().toString());
+                			list.add(node.getChild(i).toXML().toString().replace("gml:",""));
                 		}
                 	}
                 }else {
                 	list.add(node.getValue().toString());
                 }
                 ///////////////////////
-            }a
+            }
 
             @Override
             public void finishedNodeSet(Expression expression) {
