@@ -57,7 +57,7 @@ public class XPathTermMapProcessor extends AbstractTermMapProcessor {
             log.error("SAXPathException " + ex);
         }
         StringBufferInputStream input =
-                new StringBufferInputStream(node.toXML().toString().replace("gml:",""));
+                new StringBufferInputStream(node.toXML().toString());
 
         InputSource source = new InputSource(input);
         Event event = dog.createEvent();
