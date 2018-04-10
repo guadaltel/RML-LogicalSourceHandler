@@ -5,6 +5,9 @@ import be.ugent.mmlab.rml.xml.XOMBuilder;
 import java.io.StringBufferInputStream;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
+
 import javax.xml.xpath.XPathException;
 import jlibs.xml.DefaultNamespaceContext;
 import jlibs.xml.sax.dog.NodeItem;
@@ -68,9 +71,18 @@ public class XPathTermMapProcessor extends AbstractTermMapProcessor {
             public void onNodeHit(
                     Expression expression, NodeItem nodeItem) {
                 Node node = (Node) nodeItem.xml;
+                //Added by Carlos Palma Zurita for CNIG-RDF
+                if(node instanceof nu.xom.Attribute && ((nu.xom.Attribute) node).getValue().contains("ID=AU_ADMINISTRATIVE")) {
+                	Pattern pattern = Pattern.compile("AU_ADMINISTRATIVE(.*)_([0-9]+)#");
+                	Matcher matcher = pattern.matcher(node.getValue().toString());
+                	if (matcher.find())
+                	{
+                		list.add(matcher.group(2));
+                	}
+                }
                 //if(nodeItem instanceOf Attribute)
                 //Added by Carlos Palma Zurita for CNIG-RDF
-                if(node instanceof nu.xom.Element && ((nu.xom.Element) node).getLocalName().equals("geometry")) {
+                else if(node instanceof nu.xom.Element && ((nu.xom.Element) node).getLocalName().equals("geometry")) {
                 	for(int i = 0; i < node.getChildCount(); i++ ) {
                 		Node child = node.getChild(i);
                 		if(node.getChild(i) instanceof nu.xom.Element && ((nu.xom.Element) child).getNamespacePrefix(0).equals("gml"))  {
