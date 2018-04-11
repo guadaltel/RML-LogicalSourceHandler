@@ -73,7 +73,7 @@ public class XPathTermMapProcessor extends AbstractTermMapProcessor {
                 Node node = (Node) nodeItem.xml;
                 //Added by Carlos Palma Zurita for CNIG-RDF
                 if(node instanceof nu.xom.Attribute && ((nu.xom.Attribute) node).getValue().contains("ID=AU_ADMINISTRATIVE")) {
-                	Pattern pattern = Pattern.compile("AU_ADMINISTRATIVE(.*)_([0-9]+)#");
+                	Pattern pattern = Pattern.compile("AU_ADMINISTRATIVE(.*)_([\\d\\w]+)#");
                 	Matcher matcher = pattern.matcher(node.getValue().toString());
                 	if (matcher.find())
                 	{
